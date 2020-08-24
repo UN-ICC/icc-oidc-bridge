@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+{% load qr_code %}
+{% load static %}
+<html lang="en">
+  <head>    
+    <meta charset="UTF-8">
+    <title>OIDC Indy bridge</title>    
+    <style>
+        body {
+          font-family: Sans-Serif;
+        }
+        code.multiline {
+          display: block;
+          white-space: pre-wrap
+        }
+        td {
+          padding-left: 20px;
+          padding-right: 20px;
+        }
+	.container {
+	  display: flex;
+	  flex-direction: column;
+	  justify-content: center;
+	  align-items: center;
+	  padding-top: 12px;
+	  height: 100vh;
+	  width: 100vw;
+	}
+    </style>
+</head>
+<body>
+{% block content %}
+<span>  
+  <input id="pollInterval" value={{poll_interval}} style="display: none" />
+  <input id="pollUrl" value={{poll_url}} style="display: none" />
+  <input id="resolutionUrl" value={{resolution_url}} style="display: none" />  
+  <div class="container">
+      <h1>OIDC Indy bridge</h1>
+      {% qr_from_text url size="M" image_format="svg" %}
+  </div>
+</span>
+{% endblock %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready((function poll() {
+        setTimeout(function () {
+            $.ajax({
+                type: 'GET',
+                url: document.getElementById('pollUrl').value,
+                success: function () {
+                    window.location.replace(document.getElementById('resolutionUrl').value);
+                },
+                error: poll
+            });
+        }, parseInt(document.getElementById('pollInterval').value, 10));
+    })());
+</script>
+
+</body>
+</html>

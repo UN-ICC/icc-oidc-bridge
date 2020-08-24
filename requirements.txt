@@ -1,0 +1,11 @@
+Django==3.1
+djangorestframework==3.11.1
+psycopg2-binary==2.8.5
+requests==2.24.0
+django-model-utils==4.0.0
+django-filter==2.3.0
+django-qr-code==1.2.0
+drf-yasg==1.17.1
+django-oidc-provider==0.7
+PyJWT==1.7.1
+cryptography==3.0
