@@ -31,3 +31,6 @@ htmlcov
 profile_images
 profile_images/*
 *.csv
+
+oidc_controller/settings/g.py
+docker-compose-g.yml
