@@ -57,11 +57,10 @@
                 },
                 error: function() {
                     tryNumber += 1;
-                    if (tryNumber < maxTries) {
-                        poll()
-                    } else {
-                        maxTriesReached()
+                    if (tryNumber >= maxTries) {
+                        return maxTriesReached()
                     }
+                    poll()
                 }
             });
         }, parseInt("{{ poll_interval }}", 10));
