@@ -182,6 +182,7 @@ def authorize(request):
             {
                 "url": short_url,
                 "poll_interval": settings.POLL_INTERVAL,
+                "poll_max_tries": settings.POLL_MAX_TRIES,
                 "poll_url": f"{settings.SITE_URL}/vc/connect/poll?pid={pres_req}",
                 "resolution_url": f"{settings.SITE_URL}/vc/connect/callback?pid={pres_req}",
             },
