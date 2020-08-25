@@ -29,32 +29,46 @@
     </style>
 </head>
 <body>
+
 {% block content %}
-<span>  
-  <input id="pollInterval" value={{poll_interval}} style="display: none" />
-  <input id="pollUrl" value={{poll_url}} style="display: none" />
-  <input id="resolutionUrl" value={{resolution_url}} style="display: none" />  
+<span>
   <div class="container">
       <h1>OIDC Indy bridge</h1>
-      {% qr_from_text url size="M" image_format="svg" %}
+      <div id="qr-code">
+        {% qr_from_text url size="M" image_format="svg" %}
+      </div>
   </div>
 </span>
 {% endblock %}
+
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
 <script type="text/javascript">
+    var tryNumber = 0
+    var maxTries = parseInt("{{ poll_max_tries }}")
     $(document).ready((function poll() {
         setTimeout(function () {
             $.ajax({
                 type: 'GET',
-                url: document.getElementById('pollUrl').value,
+                url: "{{ poll_url }}",
                 success: function () {
-                    window.location.replace(document.getElementById('resolutionUrl').value);
+                    window.location.replace("{{ resolution_url }}");
                 },
-                error: poll
+                error: function() {
+                    tryNumber += 1;
+                    if (tryNumber >= maxTries) {
+                        return maxTriesReached()
+                    }
+                    poll()
+                }
             });
-        }, parseInt(document.getElementById('pollInterval').value, 10));
+        }, parseInt("{{ poll_interval }}", 10));
     })());
+
+    function maxTriesReached() {
+        $("#qr-code")[0].innerHTML = "Timeout reached, please refresh the page to get a new QR code."
+    }
 </script>
 
 </body>
