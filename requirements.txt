@@ -9,3 +9,4 @@ drf-yasg==1.17.1
 django-oidc-provider==0.7
 PyJWT==1.7.1
 cryptography==3.0
+marshmallow==3.7.1

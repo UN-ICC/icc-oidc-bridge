@@ -1,4 +1,4 @@
-from aca.aca import ACAClient, Presentation
+from aca.aca import ACAClient, PresentationFactory
 from django.utils import timezone
 from datetime import timedelta
 from oidc.utils.shortener import create_short_url
@@ -15,8 +15,8 @@ def authorization(pres_req_conf_id: str, request_parameters: dict):
     response = aca_client.create_proof_request(presentation_configuration.to_json())
     public_did = aca_client.get_public_did()
     endpoint = aca_client.get_endpoint_url()
-    presentation_request = Presentation(
-        presentation=response.get("presentation_request"),
+    presentation_request = PresentationFactory.from_params(
+        presentation_request=response.get("presentation_request"),
         p_id=response.get("thread_id"),
         public_did=public_did,
         endpoint=endpoint,

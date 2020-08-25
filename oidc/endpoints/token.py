@@ -3,7 +3,7 @@ from django.conf import settings
 from django.utils import timezone
 from oidc.utils.token import token
 import uuid
-from aca.aca import Presentation
+from aca.aca import PresentationFactory
 
 
 def create_id_token(session: AuthSession):
@@ -21,8 +21,8 @@ def create_id_token(session: AuthSession):
     if nonce:
         claims.update({"nonce": nonce})
 
-    presentation = Presentation.from_didcom(session.presentation_request)
-    requested_parameters = presentation.presentation
+    presentation = PresentationFactory.from_json(session.presentation_request)
+    requested_parameters = presentation.presentation.data
 
     if isinstance(requested_parameters, dict):
         for k, v in requested_parameters.get("requested_attributes", {}).items():

@@ -1,6 +1,7 @@
 import requests
 import base64
 import json
+from marshmallow import Schema, fields, ValidationError, post_load
 
 
 def encode_base64(payload: dict) -> str:
@@ -11,57 +12,113 @@ def decode_base64(payload: str) -> dict:
     return json.loads(base64.b64decode(payload).decode("utf-8"))
 
 
-class Presentation:
-    @classmethod
+class PresentationData(fields.Field):
+    def _serialize(self, value, attr, obj, **kwargs):
+        if value is None:
+            return ""
+        return encode_base64(value)
+
+    def _deserialize(self, value, attr, data, **kwargs):
+        try:
+            return decode_base64(value)
+        except ValueError as error:
+            raise ValidationError("Should be a base64 string") from error
+
+
+class PresentationAttach:
     def __init__(
         self,
-        presentation: dict,
-        p_id: str,
-        public_did: str,
-        endpoint: str,
-        p_type: str = "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/present-proof/1.0/request-presentation",
-        routing_keys: str = None,
+        data: dict,
+        id: str = "libindy-request-presentation-0",
+        mime_type: str = "application/json",
+    ):
+        self.data = data
+        self.mime_type = mime_type
+        self.id = id
+
+
+class Service:
+    def __init__(
+        self, recipient_keys: str, service_endpoint: str, routing_keys: str = None
+    ):
+        self.recipient_keys = recipient_keys
+        self.routing_keys = routing_keys
+        self.service_endpoint = service_endpoint
+
+
+class Presentation:
+    def __init__(
+        self,
+        presentation: PresentationAttach,
+        service: Service,
+        id: str,
+        type: str = "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/present-proof/1.0/request-presentation",
     ):
         self.presentation = presentation
-        self.p_id = p_id
-        self.p_type = p_type
-        self.public_did = public_did
-        self.endpoint = endpoint
-        self.routing_keys = routing_keys
+        self.service = service
+        self.id = id
+        self.type = type
+
+
+class ServiceSchema(Schema):
+    recipient_keys = fields.Str(data_key="recipientKeys")
+    routing_keys = fields.Str(data_key="routingKeys", allow_none=True)
+    service_endpoint = fields.Str(data_key="serviceEndpoint")
+
+    @post_load
+    def make_service(self, data, **kwargs):
+        return Service(**data)
+
+
+class PresentationAttachSchema(Schema):
+    id = fields.Str(data_key="@id")
+    mime_type = fields.Str(data_key="@mime-type")
+    data = PresentationData(data_key="data")
+
+    @post_load
+    def make_presentation_attach(self, data, **kwargs):
+        return PresentationAttach(**data)
+
+
+class PresentationSchema(Schema):
+    type = fields.Str(data_key="@type")
+    id = fields.Str(data_key="@id")
+    service = fields.Nested(ServiceSchema, data_key="~service")
+    presentation = fields.Nested(
+        PresentationAttachSchema, data_key="request_presentations~attach"
+    )
+
+    @post_load
+    def make_presentation(self, data, **kwargs):
+        return Presentation(**data)
+
+
+class PresentationFactory:
+    presentation_schema = PresentationSchema()
+
+    def __init__(self, presentation: Presentation):
+        self.presentation = presentation
 
     @classmethod
-    def from_didcom(cls, presentation_request: dict):
-        presentation = (
-            presentation_request.get("request_presentations~attach", {})
-            .get("data", {})
-            .get("base64", "")
+    def from_params(
+        cls, presentation_request: dict, p_id: str, public_did: str, endpoint: str
+    ):
+        presentation = Presentation(
+            presentation=PresentationAttach(data=presentation_request),
+            service=Service(recipient_keys=public_did, service_endpoint=endpoint),
+            id=p_id,
         )
+        return cls(presentation)
 
-        service = presentation_request.get("~service", {})
-        return cls(
-            presentation=decode_base64(presentation),
-            p_id=presentation_request.get("@id"),
-            p_type=presentation_request.get("@type"),
-            public_did=service.get("recipientKeys"),
-            endpoint=service.get("serviceEndpoint"),
-            routing_keys=service.get("routingKeys"),
+    @classmethod
+    def from_json(cls, presentation_request: dict):
+        presentation = PresentationFactory.presentation_schema.load(
+            presentation_request
         )
+        return cls(presentation)
 
     def to_json(self):
-        return {
-            "@id": self.p_id,
-            "@type": self.p_type,
-            "request_presentations~attach": {
-                "@id": "libindy-request-presentation-0",
-                "mime-type": "application/json",
-                "data": {"base64": encode_base64(self.presentation)},
-            },
-            "~service": {
-                "recipientKeys": [self.public_did],
-                "routingKeys": self.routing_keys,
-                "serviceEndpoint": self.endpoint,
-            },
-        }
+        return self.presentation_schema.dump(self.presentation)
 
 
 class ACAClient:
