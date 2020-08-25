@@ -6,21 +6,10 @@
 aca-py start --endpoint http://localhost:8090 --label OIDC --inbound-transport http 0.0.0.0 8090 --outbound-transport http --admin 0.0.0.0 4000 --admin-insecure-mode --wallet-type indy --wallet-name aca-oidc  --wallet-key '123456' --genesis-file pool_genesis_dev  --seed 1111111111111111111111111acaoidc --webhook-url http://localhost:8080/webhooks --auto-verify-presentation
 ```
 
-To connect the aca-py to the unsjpf-dev blockchain, you'd need a user with role 'steward' (i.e.: aca-unicc2). The docker-compose
-aca-py container should be then:
+To connect the aca-py to the unsjpf-dev blockchain, you'd need a user with role 'steward' (i.e.: aca-unicc2):
 
 ```
-aca-py:
-    image: bcgovimages/aries-cloudagent:py36-1.15-0_0.5.2
-    command: start --endpoint http://localhost:8090 --label OIDC --inbound-transport http 0.0.0.0 8090 --outbound-transport http --admin 0.0.0.0 4000 --admin-insecure-mode --wallet-type indy --wallet-name aca-unicc2  --wallet-key '123456' --genesis-file /pool_genesis_dev  --seed 11111111111111111111111acaunicc2 --webhook-url http://localhost:8080/webhooks --auto-verify-presentation
-    volumes:
-      - ${PWD}/pool_genesis_dev:/pool_genesis_dev:ro
-      - wallets-volume:/home/indy/.indy_client/wallet
-    ports:
-      - "8090:8090"
-      - "4000:4000"
-    networks:
-      indy:
+aca-py start --endpoint http://localhost:8090 --label OIDC --inbound-transport http 0.0.0.0 8090 --outbound-transport http --admin 0.0.0.0 4000 --admin-insecure-mode --wallet-type indy --wallet-name aca-unicc2  --wallet-key '123456' --genesis-file /pool_genesis_dev  --seed 11111111111111111111111acaunicc2 --webhook-url http://localhost:8080/webhooks --auto-verify-presentation
 ```
 
 - Create RSA key and update your settings with the key 'kid'
