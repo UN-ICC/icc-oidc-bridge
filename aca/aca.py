@@ -143,7 +143,7 @@ class ACAClient:
     def get_public_did(self) -> list:
         response = self.session.get(f"{self.url}/wallet/did/public")
         response.raise_for_status()
-        return response.json()["result"]
+        return response.json()["result"]["did"]
 
     def get_endpoint_url(self):
         return self.url
