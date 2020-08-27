@@ -34,3 +34,5 @@ profile_images/*
 
 oidc_controller/settings/g.py
 docker-compose-g.yml
+pool_transactions_sandbox_genesis
+ngrok.yml
