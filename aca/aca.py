@@ -104,11 +104,11 @@ class PresentationFactory:
 
     @classmethod
     def from_params(
-        cls, presentation_request: dict, p_id: str, public_did: str, endpoint: str
+        cls, presentation_request: dict, p_id: str, verkey: str, endpoint: str
     ):
         presentation = Presentation(
             presentation=PresentationAttach(data=presentation_request),
-            service=Service(recipient_keys=public_did, service_endpoint=endpoint),
+            service=Service(recipient_keys=verkey, service_endpoint=endpoint),
             id=p_id,
         )
         return cls(presentation)
@@ -143,10 +143,10 @@ class ACAClient:
         response.raise_for_status()
         return response.json()
 
-    def get_public_did(self) -> list:
+    def get_public_did(self) -> dict:
         response = self.session.get(f"{self.url}/wallet/did/public")
         response.raise_for_status()
-        return response.json()["result"]["did"]
+        return response.json()["result"]
 
     def get_endpoint_url(self):
         return self.url

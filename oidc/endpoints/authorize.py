@@ -18,7 +18,7 @@ def authorization(pres_req_conf_id: str, request_parameters: dict):
     presentation_request = PresentationFactory.from_params(
         presentation_request=response.get("presentation_request"),
         p_id=response.get("thread_id"),
-        public_did=public_did,
+        verkey=public_did.get("verkey"),
         endpoint=endpoint,
     ).to_json()
 
