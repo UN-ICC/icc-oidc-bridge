@@ -45,7 +45,7 @@ def webhooks(request, topic):
             LOGGER.info(f"Presentation Request not yet received, state is [{state}]")
             return HttpResponse()
 
-        proof = message["requested_proof"]
+        proof = message["presentation"]["requested_proof"]
         presentation_exchange_id = message["presentation_exchange_id"]
 
         LOGGER.info(f"Proof received: {proof}")
