@@ -53,11 +53,13 @@ class Presentation:
         service: Service,
         id: str,
         type: str = "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/present-proof/1.0/request-presentation",
+        comment: str = None,
     ):
         self.presentation = [presentation]
         self.service = service
         self.id = id
         self.type = type
+        self.comment = comment
 
 
 class ServiceSchema(Schema):
@@ -87,6 +89,7 @@ class PresentationSchema(Schema):
     presentation = fields.Nested(
         PresentationAttachSchema, data_key="request_presentations~attach", many=True
     )
+    comment = fields.Str(allow_none=True)
 
     @post_load
     def make_presentation(self, data, **kwargs):
