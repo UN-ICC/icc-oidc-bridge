@@ -61,8 +61,8 @@ class Presentation:
 
 
 class ServiceSchema(Schema):
-    recipient_keys = fields.List(fields.Str(data_key="recipientKeys"))
-    routing_keys = fields.List(fields.Str(data_key="routingKeys"), allow_none=True)
+    recipient_keys = fields.List(fields.Str(), data_key="recipientKeys")
+    routing_keys = fields.List(fields.Str(), data_key="routingKeys", allow_none=True)
     service_endpoint = fields.Str(data_key="serviceEndpoint")
 
     @post_load
