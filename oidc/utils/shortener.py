@@ -9,4 +9,4 @@ def create_short_url(presentation_request: dict):
         bytes(json.dumps(presentation_request), "utf-8")
     ).decode("utf-8")
     url = f"{settings.SITE_URL}?m={b64_presentation}"
-    return url
+    return url, b64_presentation

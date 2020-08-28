@@ -173,7 +173,9 @@ def authorize(request):
                 f"Error validating parameters: [{e.error}: {e.description}]"
             )
 
-        short_url, session_id, pres_req = authorization(pres_req_conf_id, request.GET)
+        short_url, session_id, pres_req, b64_presentation = authorization(
+            pres_req_conf_id, request.GET
+        )
         request.session["sessionid"] = session_id
 
         return TemplateResponse(
@@ -181,6 +183,7 @@ def authorize(request):
             template_name,
             {
                 "url": short_url,
+                "b64_presentation": b64_presentation,
                 "poll_interval": settings.POLL_INTERVAL,
                 "poll_max_tries": settings.POLL_MAX_TRIES,
                 "poll_url": f"{settings.SITE_URL}/vc/connect/poll?pid={pres_req}",

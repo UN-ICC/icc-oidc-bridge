@@ -16,11 +16,11 @@ class PresentationData(fields.Field):
     def _serialize(self, value, attr, obj, **kwargs):
         if value is None:
             return ""
-        return encode_base64(value)
+        return encode_base64(value.get("base64", ""))
 
     def _deserialize(self, value, attr, data, **kwargs):
         try:
-            return decode_base64(value)
+            return {"base64": decode_base64(value)}
         except ValueError as error:
             raise ValidationError("Should be a base64 string") from error
 

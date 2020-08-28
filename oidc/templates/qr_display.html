@@ -17,15 +17,15 @@
           padding-left: 20px;
           padding-right: 20px;
         }
-	.container {
-	  display: flex;
-	  flex-direction: column;
-	  justify-content: center;
-	  align-items: center;
-	  padding-top: 12px;
-	  height: 100vh;
-	  width: 100vw;
-	}
+        .container {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          padding-top: 12px;
+          height: 100vh;
+          width: 100vw;
+        }
     </style>
 </head>
 <body>
@@ -36,6 +36,11 @@
       <h1>OIDC Indy bridge</h1>
       <div id="qr-code">
         {% qr_from_text url size="M" image_format="svg" %}
+
+        <br>
+        <div id="btn-didcomm">
+            <h2><a href="didcomm://launch?d_m={{ b64_presentation }}">Open in a Trusted Digital Wallet</a></h2>
+        </div>
       </div>
   </div>
 </span>
