@@ -1,7 +1,7 @@
 from aca.aca import ACAClient, PresentationFactory
 from django.utils import timezone
 from datetime import timedelta
-from oidc.utils.shortener import create_short_url
+from oidc.utils.shortener import create_short_url, to_b64
 from oidc.models import AuthSession, PresentationConfigurations, MappedUrl
 from django.conf import settings
 
@@ -30,8 +30,8 @@ def authorization(pres_req_conf_id: str, request_parameters: dict):
         request_parameters=request_parameters,
         expired_timestamp=timezone.now() + timedelta(minutes=60),
     )
-    url = create_short_url(presentation_request)
+    url, b64_presentation = create_short_url(presentation_request)
     mapped_url = MappedUrl.objects.create(url=url, session=session)
     short_url = mapped_url.get_short_url()
 
-    return short_url, str(session.pk), presentation_request_id
+    return short_url, str(session.pk), presentation_request_id, b64_presentation
