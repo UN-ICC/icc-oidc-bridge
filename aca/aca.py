@@ -32,7 +32,7 @@ class PresentationAttach:
         id: str = "libindy-request-presentation-0",
         mime_type: str = "application/json",
     ):
-        self.data = data
+        self.data = data.get("base64")
         self.mime_type = mime_type
         self.id = id
 
