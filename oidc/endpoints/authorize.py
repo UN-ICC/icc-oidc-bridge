@@ -7,7 +7,7 @@ from django.conf import settings
 
 
 def authorization(pres_req_conf_id: str, request_parameters: dict):
-    aca_client = ACAClient(settings.ACA_PY_URL)
+    aca_client = ACAClient(settings.ACA_PY_URL, settings.ACA_PY_TRANSPORT_URL)
     presentation_configuration = PresentationConfigurations.objects.get(
         id=pres_req_conf_id
     )

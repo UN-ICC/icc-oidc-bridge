@@ -125,8 +125,9 @@ class PresentationFactory:
 
 
 class ACAClient:
-    def __init__(self, url: str, token: str = None) -> None:
+    def __init__(self, url: str, transport_url: str, token: str = None) -> None:
         self.url = url
+        self.transport_url = transport_url
         self.token = token
 
         headers = {"accept": "application/json", "Content-Type": "application/json"}
@@ -149,4 +150,4 @@ class ACAClient:
         return response.json()["result"]
 
     def get_endpoint_url(self):
-        return self.url
+        return self.transport_url
