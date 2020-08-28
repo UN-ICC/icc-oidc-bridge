@@ -37,20 +37,18 @@ def webhooks(request, topic):
     # TODO: validate 'secret' key
     message = json.loads(request.body)
 
-    LOGGER.info(
-        f"webhook received in usersadmin - topic: {topic} and message: {message}"
-    )
-    # SHould be triggered after a proof request has been sent by the org
+    LOGGER.info(f"webhook received - topic: {topic} and message: {message}")
+    # Should be triggered after a proof request has been sent by the org
     if topic == "present_proof":
         state = message["state"]
         if state != "presentation_received":
-            LOGGER.info((f"Presentation Request not yet received, state is [{state}]"))
+            LOGGER.info(f"Presentation Request not yet received, state is [{state}]")
             return HttpResponse()
 
         proof = message["requested_proof"]
         presentation_exchange_id = message["presentation_exchange_id"]
 
-        LOGGER.info((f"Proof received: {proof}"))
+        LOGGER.info(f"Proof received: {proof}")
 
         try:
             session = AuthSession.objects.get(
@@ -58,7 +56,7 @@ def webhooks(request, topic):
             )
         except (AuthSession.DoesNotExist, AuthSession.MultipleObjectsReturned):
             LOGGER.warning(
-                f"Couldn't find a corresponding auth session to satisfy."
+                f"Could not find a corresponding auth session to satisfy. "
                 f"Presentation request id: [{presentation_exchange_id}]"
             )
             return HttpResponse()
