@@ -72,7 +72,7 @@ class ServiceSchema(Schema):
 
 class PresentationAttachSchema(Schema):
     id = fields.Str(data_key="@id")
-    mime_type = fields.Str(data_key="@mime-type")
+    mime_type = fields.Str(data_key="mime-type")
     data = PresentationData(data_key="data")
 
     @post_load
