@@ -36,10 +36,11 @@
       <h1>OIDC Indy bridge</h1>
       <div id="qr-code">
         {% qr_from_text url size="M" image_format="svg" %}
-      </div>
-      <br>
-      <div id="btn-didcomm">
-          <a href="didcomm://launch?d_m={{ b64_presentation }}">Click here if your are on smartphone</a>
+
+        <br>
+        <div id="btn-didcomm">
+            <h2><a href="didcomm://launch?d_m={{ b64_presentation }}">Open in a Trusted Digital Wallet</a></h2>
+        </div>
       </div>
   </div>
 </span>
