@@ -16,11 +16,11 @@ class PresentationData(fields.Field):
     def _serialize(self, value, attr, obj, **kwargs):
         if value is None:
             return ""
-        return encode_base64(value.get("base64", ""))
+        return {"base64": encode_base64(value)}
 
     def _deserialize(self, value, attr, data, **kwargs):
         try:
-            return {"base64": decode_base64(value)}
+            return decode_base64(value.get("base64", ""))
         except ValueError as error:
             raise ValidationError("Should be a base64 string") from error
 
@@ -41,7 +41,7 @@ class Service:
     def __init__(
         self, recipient_keys: str, service_endpoint: str, routing_keys: str = None
     ):
-        self.recipient_keys = recipient_keys
+        self.recipient_keys = [recipient_keys]
         self.routing_keys = routing_keys
         self.service_endpoint = service_endpoint
 
@@ -54,15 +54,15 @@ class Presentation:
         id: str,
         type: str = "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/present-proof/1.0/request-presentation",
     ):
-        self.presentation = presentation
+        self.presentation = [presentation]
         self.service = service
         self.id = id
         self.type = type
 
 
 class ServiceSchema(Schema):
-    recipient_keys = fields.Str(data_key="recipientKeys")
-    routing_keys = fields.Str(data_key="routingKeys", allow_none=True)
+    recipient_keys = fields.Str(data_key="recipientKeys", many=True)
+    routing_keys = fields.Str(data_key="routingKeys", allow_none=True, many=True)
     service_endpoint = fields.Str(data_key="serviceEndpoint")
 
     @post_load
@@ -85,7 +85,7 @@ class PresentationSchema(Schema):
     id = fields.Str(data_key="@id")
     service = fields.Nested(ServiceSchema, data_key="~service")
     presentation = fields.Nested(
-        PresentationAttachSchema, data_key="request_presentations~attach"
+        PresentationAttachSchema, data_key="request_presentations~attach", many=True
     )
 
     @post_load
