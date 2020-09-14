@@ -47,5 +47,6 @@ urlpatterns = [
     ),
     path("admin/", admin.site.urls),
     url(r"^openid/", include("oidc_provider.urls", namespace="oidc_provider")),
+    path("oidc/", include("client.urls")),
     path("", include("oidc.urls")),
 ]

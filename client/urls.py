@@ -3,5 +3,5 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("oidc/auth/cb/", views.client, name="Client"),
+    path("auth/cb/", views.client, name="Client"),
 ]
