@@ -22,7 +22,7 @@ def create_id_token(session: AuthSession):
         claims.update({"nonce": nonce})
 
     presentation = PresentationFactory.from_json(session.presentation_request)
-    requested_parameters = presentation.presentation.data
+    requested_parameters = presentation.presentation.__dict__
 
     if isinstance(requested_parameters, dict):
         for k, v in requested_parameters.get("requested_attributes", {}).items():
