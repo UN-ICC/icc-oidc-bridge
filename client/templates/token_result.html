@@ -9,6 +9,13 @@
         body {
           font-family: Sans-Serif;
         }
+        code {
+            font-family: Consolas,"courier new";
+            color: crimson;
+            background-color: #f1f1f1;
+            padding: 2px;
+            font-size: 105%;
+        }
         code.multiline {
           display: block;
           white-space: pre-wrap
@@ -34,6 +41,11 @@
 <span>
   <div class="container">
       <h1>Client app: login complete</h1>
+
+      <ul>
+          <li>id_token: <code>{{ id_token }}</code></li>
+          <li>token_type: <code>{{ token_type }}</code></li>
+      </ul>
 
   </div>
 </span>
