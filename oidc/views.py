@@ -146,7 +146,7 @@ def token_endpoint(request):
 
 
 def authorize(request):
-    template_name = "token_result.html"
+    template_name = "qr_display.html"
 
     if request.method == "GET":
 
