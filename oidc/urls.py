@@ -13,9 +13,6 @@ urlpatterns = [
     path("vc/connect/authorize/", views.authorize, name="authorize"),
     path("vc/connect/poll", views.poll, name="poll"),
     path("vc/connect/callback", views.callback, name="callback"),
-    path(
-        "oidc/auth/cb/", views.dummy, name="dummy"
-    ),  # Dummy endpoint to finish everything
     path("vc/connect/token", views.token_endpoint, name="token_endpoint"),
     path("", views.index, name="Index"),
 ]

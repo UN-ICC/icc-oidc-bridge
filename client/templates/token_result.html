@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+{% load static %}
+<html lang="en">
+  <head>    
+    <meta charset="UTF-8">
+    <title>Client application</title>
+    <style>
+        body {
+          font-family: Sans-Serif;
+        }
+        code {
+            font-family: Consolas,"courier new";
+            color: crimson;
+            background-color: #f1f1f1;
+            padding: 2px;
+            font-size: 105%;
+        }
+        code.multiline {
+          display: block;
+          white-space: pre-wrap;
+        }
+        .container {
+            width: 90%;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+
+{% block content %}
+<span>
+  <div class="container">
+      <h1>Client app: login complete</h1>
+
+      <h4>id_token</h4>
+      <code>{{ id_token }}</code>
+
+      <h4>token_type</h4>
+      <code>{{ token_type }}</code>
+
+  </div>
+</span>
+{% endblock %}
+
+</body>
+</html>

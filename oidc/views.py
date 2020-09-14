@@ -32,6 +32,10 @@ class PresentationConfigurationViews(RetrieveUpdateDestroyAPIView):
     queryset = PresentationConfigurations.objects.all()
 
 
+def index(request):
+    return HttpResponse()
+
+
 @csrf_exempt
 def webhooks(request, topic):
     # TODO: validate 'secret' key
@@ -139,15 +143,6 @@ def token_endpoint(request):
 
         data = {"access_token": "invalid", "id_token": token, "token_type": "Bearer"}
         return JsonResponse(data)
-
-
-def dummy(request):
-    LOGGER.info(f"Hit dummy with {request.GET}")
-    return HttpResponse()
-
-
-def index(request):
-    return HttpResponse()
 
 
 def authorize(request):

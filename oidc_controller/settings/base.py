@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "qr_code",
     "drf_yasg",
     "oidc_provider",
+    "client",
 ]
 
 MIDDLEWARE = [
