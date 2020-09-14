@@ -21,23 +21,21 @@ def create_id_token(session: AuthSession):
     if nonce:
         claims.update({"nonce": nonce})
 
-    presentation = PresentationFactory.from_json(session.presentation_request)
-    requested_parameters = presentation.presentation.__dict__
+    presentation_factory = PresentationFactory.from_json(session.presentation_request)
+    requested_parameters = presentation_factory.presentation.presentation
 
-    if isinstance(requested_parameters, dict):
-        for k, v in requested_parameters.get("requested_attributes", {}).items():
-            attr = (
-                session.presentation.get("requested_proof", {})
-                .get("revealed_attributes", {})
-                .get(k)
-            )
-            if attr:
-                claims.update({v: attr.get("raw", "")})
-                if (
-                    presentation_configuration
-                    and presentation_configuration.subject_identifier == v
-                ):
-                    claims.update({IDENTITY_PARAM: attr.get("raw", "")})
+    if requested_parameters:
+        for requested_attr in requested_parameters:
+            for k, v in requested_attr.data.get("requested_attributes", {}).items():
+                attr = session.presentation.get("revealed_attrs", {}).get(k)
+                if attr:
+                    attr_name = v.get("name")
+                    claims.update({attr_name: attr.get("raw", "")})
+                    if (
+                        presentation_configuration
+                        and presentation_configuration.subject_identifier == attr_name
+                    ):
+                        claims.update({IDENTITY_PARAM: attr.get("raw", "")})
 
     if IDENTITY_PARAM not in claims.keys():
         claims.update({IDENTITY_PARAM: str(uuid.uuid4())})

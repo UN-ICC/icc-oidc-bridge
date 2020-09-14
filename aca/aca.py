@@ -55,7 +55,7 @@ class Presentation:
         type: str = "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/present-proof/1.0/request-presentation",
         comment: str = None,
     ):
-        self.presentation = [presentation]
+        self.presentation = presentation
         self.service = service
         self.id = id
         self.type = type
@@ -107,7 +107,7 @@ class PresentationFactory:
         cls, presentation_request: dict, p_id: str, verkey: str, endpoint: str
     ):
         presentation = Presentation(
-            presentation=PresentationAttach(data=presentation_request),
+            presentation=[PresentationAttach(data=presentation_request)],
             service=Service(recipient_keys=verkey, service_endpoint=endpoint),
             id=p_id,
         )

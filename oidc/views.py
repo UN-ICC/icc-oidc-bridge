@@ -28,7 +28,7 @@ LOGGER = logging.getLogger(__name__)
 
 class PresentationConfigurationViews(RetrieveUpdateDestroyAPIView):
     serializer_class = PresentationConfigurationSerializer
-    permission_classes = permissions.IsAuthenticated
+    permission_classes = (permissions.IsAuthenticated,)
     queryset = PresentationConfigurations.objects.all()
 
 
@@ -49,12 +49,12 @@ def webhooks(request, topic):
             LOGGER.info(f"Presentation Request not yet received, state is [{state}]")
             return HttpResponse()
 
-        proof = message["presentation"]["requested_proof"]
-        presentation_exchange_id = message["presentation_exchange_id"]
-
-        LOGGER.info(f"Proof received: {proof}")
-
         try:
+            proof = message["presentation"]["requested_proof"]
+            presentation_exchange_id = message["presentation_exchange_id"]
+
+            LOGGER.info(f"Proof received: {proof}")
+
             session = AuthSession.objects.get(
                 presentation_request_id=presentation_exchange_id
             )
