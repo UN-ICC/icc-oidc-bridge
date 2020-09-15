@@ -1,5 +1,5 @@
 import pytest
-from oidc.models import AuthSession, PresentationConfigurations
+from oidc.models import AuthSession, PresentationConfigurations, MappedUrl
 from django.utils import timezone
 from datetime import timedelta
 from oidc_provider.models import RSAKey
@@ -116,3 +116,59 @@ def validated_session():
             "self_attested_attrs": {},
         },
     )
+
+
+@pytest.fixture
+def non_validated_session():
+    return AuthSession.objects.create(
+        id="0942a7b2-015d-420a-ac13-242694bcbf6f",
+        presentation_record_id="verified-email",
+        presentation_request_id="e2e1b664-5fd9-401d-96bc-26a62c4777a8",
+        presentation_request={
+            "@id": "e505dc2a-5320-478f-8c65-a68f04562a47",
+            "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/present-proof/1.0/request-presentation",
+            "comment": None,
+            "~service": {
+                "routingKeys": None,
+                "recipientKeys": ["2BbGm6Mo9BVkXkn1YGjUoEUBB85Ba7XZW6qfgpMXD3XP"],
+                "serviceEndpoint": "http://127.0.0.1:8090",
+            },
+            "request_presentations~attach": [
+                {
+                    "@id": "libindy-request-presentation-0",
+                    "data": {
+                        "base64": "eyJuYW1lIjogIkJhc2ljIFByb29mIiwgInZlcnNpb24iOiAiMS4wIiwgInJlcXVlc3RlZF9hdHRyaWJ1dGVzIjogeyJlMmQwMjJiMi0xNDNiLTRiNDctYjI4OS1lMmJhNzYyNTUyZjQiOiB7Im5hbWUiOiAiZW1haWwiLCAicmVzdHJpY3Rpb25zIjogW119fSwgInJlcXVlc3RlZF9wcmVkaWNhdGVzIjoge30sICJub25jZSI6ICIyMDUwOTE3MDc1Mzk4NDk3MDk3MTQyODg0MDIzNjQ5MDQyNDIxMTUifQ=="
+                    },
+                    "mime-type": "application/json",
+                }
+            ],
+        },
+        presentation_request_satisfied=False,
+        expired_timestamp=timezone.now() + timedelta(days=1),
+        request_parameters={
+            "nonce": "vdoOCIrMvSRn2vYcgAV3vszUKb3ACJlD",
+            "scope": "openid profile vc_authn",
+            "state": "O8ALJmGFm5ByvYMyWhT7vkzdc3dc5Yds",
+            "client_id": "770241",
+            "redirect_uri": "http://127.0.0.1:8080/oidc/auth/cb/",
+            "response_type": "code",
+            "pres_req_conf_id": "verified-email",
+        },
+        presentation={
+            "predicates": {},
+            "revealed_attrs": {
+                "e2d022b2-143b-4b47-b289-e2ba762552f4": {
+                    "raw": "test@mail.org",
+                    "encoded": "69775574976209370463886362368455342215648530278529236721860183817752792728556",
+                    "sub_proof_index": 0,
+                }
+            },
+            "unrevealed_attrs": {},
+            "self_attested_attrs": {},
+        },
+    )
+
+
+@pytest.fixture
+def mapped_url(non_validated_session):
+    return MappedUrl.objects.create(url="http://url.com", session=non_validated_session)

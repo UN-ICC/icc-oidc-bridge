@@ -62,7 +62,7 @@ class AuthSession(TimeStampedModel):
     def __str__(self):
         return f"{self.presentation_record_id} - {self.presentation_request_id}"
 
-    def satfisfy_session(self, presentation):
+    def satisfy_session(self, presentation):
         self.presentation_request_satisfied = True
         self.presentation = presentation
         self.save()

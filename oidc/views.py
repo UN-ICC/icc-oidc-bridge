@@ -49,6 +49,7 @@ def webhooks(request, topic):
             LOGGER.info(f"Presentation Request not yet received, state is [{state}]")
             return HttpResponse()
 
+        presentation_exchange_id = "- not_set -"
         try:
             proof = message["presentation"]["requested_proof"]
             presentation_exchange_id = message["presentation_exchange_id"]
@@ -58,6 +59,8 @@ def webhooks(request, topic):
             session = AuthSession.objects.get(
                 presentation_request_id=presentation_exchange_id
             )
+            session.satisfy_session(proof)
+
         except (AuthSession.DoesNotExist, AuthSession.MultipleObjectsReturned):
             LOGGER.warning(
                 f"Could not find a corresponding auth session to satisfy. "
@@ -65,7 +68,10 @@ def webhooks(request, topic):
             )
             return HttpResponse()
 
-        session.satfisfy_session(proof)
+        except Exception as e:
+            LOGGER.error(f"Wrong 'present_proof' body: {message} - error: {e}")
+            return HttpResponse()
+
     return HttpResponse()
 
 
@@ -149,13 +155,12 @@ def authorize(request):
     template_name = "qr_display.html"
 
     if request.method == "GET":
-
         pres_req_conf_id = request.GET.get("pres_req_conf_id")
         if not pres_req_conf_id:
             return HttpResponseBadRequest("pres_req_conf_id query parameter not found")
 
-        scopes = request.GET.get("scope").split(" ")
-        if "vc_authn" not in scopes:
+        scopes = request.GET.get("scope")
+        if not scopes or "vc_authn" not in scopes.split(" "):
             return HttpResponseBadRequest("Scope vc_authn not found")
 
         aut = AuthorizeEndpoint(request)

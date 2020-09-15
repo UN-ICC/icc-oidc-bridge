@@ -6,7 +6,7 @@ urlpatterns = [
     path("webhooks/topic/<str:topic>/", views.webhooks, name="webhooks"),
     path("url/<str:key>", views.url_shortener, name="url_shortener"),
     path(
-        "api/vc-configs/<int:pk>",
+        "api/vc-configs/<str:pk>",
         views.PresentationConfigurationViews.as_view(),
         name="PresentationConfiguration",
     ),
