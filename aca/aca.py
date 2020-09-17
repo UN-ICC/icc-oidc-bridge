@@ -41,7 +41,7 @@ class Service:
     def __init__(
         self, recipient_keys: str, service_endpoint: str, routing_keys: str = None
     ):
-        self.recipient_keys = [recipient_keys]
+        self.recipient_keys = recipient_keys
         self.routing_keys = routing_keys
         self.service_endpoint = service_endpoint
 
