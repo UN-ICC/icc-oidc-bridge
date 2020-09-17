@@ -15,10 +15,11 @@ def authorization(pres_req_conf_id: str, request_parameters: dict):
     response = aca_client.create_proof_request(presentation_configuration.to_json())
     public_did = aca_client.get_public_did()
     endpoint = aca_client.get_endpoint_url()
+
     presentation_request = PresentationFactory.from_params(
         presentation_request=response.get("presentation_request"),
         p_id=response.get("thread_id"),
-        verkey=public_did.get("verkey"),
+        verkey=[public_did.get("verkey")],
         endpoint=endpoint,
     ).to_json()
 
