@@ -1,6 +1,8 @@
-from aca.aca import ACAClient, PresentationFactory
+from aca.client import ACAClient
 from django.utils import timezone
 from datetime import timedelta
+
+from aca.models import PresentationFactory
 from oidc.utils.shortener import create_short_url
 from oidc.models import AuthSession, PresentationConfigurations, MappedUrl
 from django.conf import settings
