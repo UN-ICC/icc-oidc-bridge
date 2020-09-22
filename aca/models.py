@@ -40,7 +40,7 @@ class Service:
 class Presentation:
     def __init__(
         self,
-        presentation: PresentationAttach,
+        presentation: [PresentationAttach],
         service: Service,
         id: str,
         type: str = "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/present-proof/1.0/request-presentation",
@@ -95,7 +95,7 @@ class PresentationFactory:
 
     @classmethod
     def from_params(
-        cls, presentation_request: dict, p_id: str, verkey: str, endpoint: str
+        cls, presentation_request: dict, p_id: str, verkey: [str], endpoint: str
     ):
         presentation = Presentation(
             presentation=[PresentationAttach(data=presentation_request)],
