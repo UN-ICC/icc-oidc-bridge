@@ -5,7 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.validators import URLValidator
 from django.test import override_settings
 
-from aca.aca import ACAClient
+from aca.client import ACAClient
 from oidc.endpoints.authorize import authorization
 from oidc.models import AuthSession
 

@@ -1,9 +1,9 @@
+from aca.models import PresentationFactory
 from oidc.models import PresentationConfigurations, AuthSession
 from django.conf import settings
 from django.utils import timezone
 from oidc.utils.token import token
 import uuid
-from aca.aca import PresentationFactory
 
 
 def extract_claims(session: AuthSession):
