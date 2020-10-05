@@ -12,6 +12,7 @@ from django.http import (
     HttpResponseRedirect,
     HttpResponseNotFound,
     JsonResponse,
+    HttpResponseServerError,
 )
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from oidc.serializers import PresentationConfigurationSerializer
@@ -141,9 +142,12 @@ def token_endpoint(request):
         if not session.presentation_request_satisfied:
             return HttpResponseBadRequest()
 
-        token = create_id_token(session)
-
-        session.delete()
+        try:
+            token = create_id_token(session)
+            session.delete()
+        except Exception as e:
+            LOGGER.warning(f"Error creating token for {session_id}: {e}")
+            return HttpResponseServerError()
 
         # Add CorsOrigin with cors_allow_any?
 
