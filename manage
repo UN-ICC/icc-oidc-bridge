@@ -14,7 +14,7 @@ export IDENTITY_SERVER_API_KEY=""
 export IDENTITY_SERVER_WEB_HOOK_URL=${IDENTITY_SERVER_URL}
 export SECRET_KEY="&(*grsdhgkfds87s8sd88sfasfasflk781asd.xdfjsafudgd"
 
-export SITE_URL="http://localhost:8080"
+export SITE_URL="http://localhost:5000"
 export DEBUG=True
 
 # aca-py
@@ -37,6 +37,7 @@ fi
 start() {
     docker-compose build
     docker-compose up -d
+    docker-compose logs -f
 }
 stop() {
     docker-compose stop 

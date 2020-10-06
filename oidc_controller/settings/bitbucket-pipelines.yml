@@ -1,0 +1,30 @@
+stepInstallDependenciesStep: &stepInstallDependenciesStep
+  step:
+    image: python:3.6
+    name: Test
+    caches:
+      - pip
+    script:
+      - pip install -r requirements.txt
+      - pytest --cov=. --cov-report=xml ./
+    artifacts:
+      - pytest-report.xml
+      - coverage.xml
+
+stepRunSonarScanner: &stepRunSonarScanner
+  step:
+    image: sonarsource/sonar-scanner-cli:latest
+    name: Sonarqube scan
+    script:
+      - sonar-scanner -Dproject.settings=sonar-project.properties -Dsonar.projectKey=$SONARQUBE_PROJECT_KEY:$BITBUCKET_BRANCH -Dsonar.login=$SONARQUBE_TOKEN
+
+pipelines:
+  pull-requests:
+    '{master,dev,qa,feature/*}':
+      - <<: *stepInstallDependenciesStep
+      - <<: *stepRunSonarScanner
+
+  branches:
+    master:
+      - <<: *stepInstallDependenciesStep
+      - <<: *stepRunSonarScanner
