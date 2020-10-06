@@ -20,7 +20,7 @@ stepRunSonarScanner: &stepRunSonarScanner
 
 pipelines:
   pull-requests:
-    '{master,dev,qa,feature/*}':
+    '{master,dev,qa,github,feature/*}':
       - <<: *stepInstallDependenciesStep
       - <<: *stepRunSonarScanner
 
@@ -32,8 +32,12 @@ pipelines:
       - <<: *stepInstallDependenciesStep
       - <<: *stepRunSonarScanner
     github:
+      - <<: *stepInstallDependenciesStep
+      - <<: *stepRunSonarScanner
+      
       - step:
+        name: Release to github
         script:
-        - git remote set-url origin git@github.com:UN-ICC/icc-oidc-bridge.git
-        - git push origin master
+          - git remote set-url origin git@github.com:UN-ICC/icc-oidc-bridge.git
+          - git push origin master
     
