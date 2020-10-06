@@ -32,11 +32,11 @@ You should run the demo in a workstation with direct access form internet, using
  ```
 
  - Set superadmin password to be able to configure the birdge
- ```
+```
  docker exec -it oidc-bridge_oidc-django_1 bash
  
  code$ python manage.py createsuperuser
- ```
+```
 
  - Add the following key in the model RSAKey so it matches the variable JWT_KEY_KID in local.py
 
@@ -70,7 +70,7 @@ t6UBCB+s1tVpoooQ1VCeSrLsB5GMS5uT6WsEfkAf3DQUhLxhDNH2
 -----END RSA PRIVATE KEY-----
 ```
 
- If you want to generate your own key, you can use the following command:
+ If you need to generate your own key, you can use the following command:
  ```
  code$ python manage.py creatersakey
  RSA key successfully created with kid: 3fd0079d2f87421708864ee9c84c8d4d
