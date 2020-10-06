@@ -31,7 +31,7 @@ You should run the demo in a workstation with direct access form internet, using
  ./manage start
  ```
 
- - Set superadmin password to be able to configure the birdge
+ - Set superadmin password to be able to configure the bridge
 ```
  docker exec -it oidc-bridge_oidc-django_1 bash
  
@@ -94,7 +94,7 @@ t6UBCB+s1tVpoooQ1VCeSrLsB5GMS5uT6WsEfkAf3DQUhLxhDNH2
     Redirect Uris: http://localhost:5000/oidc/auth/cb/ (This URL should match what it comes from the RP in the demo)
  - After creating the client, get the client ID and update the [manage](https://github.com/bcgov/vc-authn-oidc/blob/master/demo/docker/manage) and modify the variable OIDC_RP_CLIENT_ID
    
- - If you prefer, you can run q uqikcer demo by not doing the vc-authn part and just invoke the following URL replacing the IP address, the redirect URI and the client_id
+ - If you prefer, you can run q quicker demo by not starting the vc-authn part and just invoke the following URL replacing the IP address, the redirect URI and the client_id
 ```
  htttp://localhost:5000/vc/connect/authorize?pres_req_conf_id=verified-email&scope=openid+profile+vc_authn&response_type=code&client_id=310090&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Foidc%2Fauth%2Fcb%2F&state=O8ALJmGFm5ByvYMyWhT7vkzdc3dc5Yds&nonce=
 ``` 
