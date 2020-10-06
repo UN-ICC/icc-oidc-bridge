@@ -34,10 +34,9 @@ pipelines:
     github:
       - <<: *stepInstallDependenciesStep
       - <<: *stepRunSonarScanner
-      
+
       - step:
-        name: Release to github
-        script:
-          - git remote set-url origin git@github.com:UN-ICC/icc-oidc-bridge.git
-          - git push origin master
+          script:
+            - git remote set-url origin git@github.com:UN-ICC/icc-oidc-bridge.git
+            - git push origin master
     
