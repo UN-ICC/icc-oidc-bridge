@@ -47,7 +47,7 @@ class TestPresentationConfigurationViews:
 class TestWebhooks:
     def test_unknown_topic(self, api_client, non_validated_session):
         response = api_client.post(
-            f"/webhooks/topic/unknown_topic/",
+            "/webhooks/topic/unknown_topic/",
             data=json.dumps({"state": "presentation_received"}),
             content_type="application/json",
         )
@@ -58,7 +58,7 @@ class TestWebhooks:
         self, api_client, non_validated_session
     ):
         response = api_client.post(
-            f"/webhooks/topic/present_proof/",
+            "/webhooks/topic/present_proof/",
             data=json.dumps({"state": "some_state"}),
             content_type="application/json",
         )
@@ -67,7 +67,7 @@ class TestWebhooks:
 
     def test_present_proof_wrong_body(self, api_client, non_validated_session):
         response = api_client.post(
-            f"/webhooks/topic/present_proof/",
+            "/webhooks/topic/present_proof/",
             data=json.dumps({"state": "presentation_received"}),
             content_type="application/json",
         )
@@ -76,7 +76,7 @@ class TestWebhooks:
 
     def test_present_proof_session_not_found(self, api_client, non_validated_session):
         response = api_client.post(
-            f"/webhooks/topic/present_proof/",
+            "/webhooks/topic/present_proof/",
             data=json.dumps(
                 {
                     "state": "presentation_received",
@@ -91,7 +91,7 @@ class TestWebhooks:
 
     def test_present_proof_session_satisfied(self, api_client, non_validated_session):
         response = api_client.post(
-            f"/webhooks/topic/present_proof/",
+            "/webhooks/topic/present_proof/",
             data=json.dumps(
                 {
                     "state": "presentation_received",
@@ -188,7 +188,7 @@ class TestCallback:
 class TestTokenEndpoint:
     def test_wrong_grant_type(self, api_client):
         response = api_client.post(
-            "/vc/connect/token", data=json.dumps({}), content_type="application/json",
+            "/vc/connect/token", data=json.dumps({}), content_type="application/json"
         )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
@@ -218,7 +218,7 @@ class TestTokenEndpoint:
 
     def test_session_not_satisfied(self, api_client, non_validated_session):
         response = api_client.post(
-            f"/vc/connect/token",
+            "/vc/connect/token",
             data=json.dumps(
                 {
                     "grant_type": "authorization_code",
@@ -235,9 +235,9 @@ class TestTokenEndpoint:
         )
 
         response = api_client.post(
-            f"/vc/connect/token",
+            "/vc/connect/token",
             data=json.dumps(
-                {"grant_type": "authorization_code", "code": str(validated_session.pk),}
+                {"grant_type": "authorization_code", "code": str(validated_session.pk)}
             ),
             content_type="application/json",
         )
@@ -250,6 +250,18 @@ class TestTokenEndpoint:
         }
         assert not AuthSession.objects.filter(id=validated_session.id).all()
         create_id_token.assert_called_once()
+
+    def test_session_exception(self, mocker, api_client, validated_session):
+        mocker.patch("oidc.views.create_id_token", side_effect=Exception())
+
+        response = api_client.post(
+            "/vc/connect/token",
+            data=json.dumps(
+                {"grant_type": "authorization_code", "code": str(validated_session.pk)}
+            ),
+            content_type="application/json",
+        )
+        assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
 
 
 @pytest.mark.django_db
@@ -290,9 +302,7 @@ class TestAuthorize:
     )
     def test_ok(self, mocker, api_client):
         mocker.patch.object(AuthorizeEndpoint, "__init__", return_value=None)
-        mocker.patch.object(
-            AuthorizeEndpoint, "validate_params", return_value=True,
-        )
+        mocker.patch.object(AuthorizeEndpoint, "validate_params", return_value=True)
         mocker.patch(
             "oidc.views.authorization",
             return_value=(
