@@ -1,16 +1,16 @@
 # ICC OIDC Bridge
 
-This repository contains Python/Django code for an implementation of Indy verificable credential based authentication using OpenID Connect
+This repository contains Python/Django code for an implementation of Indy verifiable credential-based authentication using OpenID Connect
 
 The project is a rewrite of [VC-AuthN OIDC](https://github.com/bcgov/vc-authn-oidc) that is written in .Net as we needed the implementation to be done in Python. We have tried to mimic the vc-authn-oidc workflows and endpoints so it can be used as replacement of the .Net project in their [Demo](https://github.com/bcgov/vc-authn-oidc/tree/master/demo)
 
 ## Dependencies
 
-The project depends on a PostgreSQL database and on a running instance of [ACA-PY](https://github.com/hyperledger/aries-cloudagent-python). Both are included in the docker-compose file found in the repository.
+The project depends on a PostgreSQL database and a running instance of [ACA-PY](https://github.com/hyperledger/aries-cloudagent-python). Both are included in the docker-compose file found in the repository.
 
 ## Running the project
 
-With the bash script manage we can start/stop the project with docker. Docker and docker-compose is needed for the script to work. The manage script exports several environment variables that are used by the docker-compose. Review them to match your environment, but it should work as-is for a local test
+With the bash script manager we can start/stop the project with docker. Docker and docker-compose is needed for the script to work. The manage script exports several environment variables that are used by the docker-compose. Review them to match your environment, but it should work as-is for a local test
 
 ```
 $ ./manage
@@ -23,15 +23,17 @@ $ ./manage
 To be able to use this project in the vc-authn-demo [Demo](https://github.com/bcgov/vc-authn-oidc/tree/master/demo) we need to follow this steps.
 
 **Important**
-You should run the demo in a workstation with direct access form internet, using a cloud provider or ngrok
+You should run the demo in a workstation with direct access from Internet, using a cloud provider or ngrok
 
  - Start the agent
 
- ```
+```
  ./manage start
- ```
+
+```
 
  - Set superadmin password to be able to configure the bridge
+
 ```
  docker exec -it oidc-bridge_oidc-django_1 bash
  
@@ -75,7 +77,7 @@ t6UBCB+s1tVpoooQ1VCeSrLsB5GMS5uT6WsEfkAf3DQUhLxhDNH2
  code$ python manage.py creatersakey
  RSA key successfully created with kid: 3fd0079d2f87421708864ee9c84c8d4d
  ```
- And update the local.py with the new kid
+ And update the local.py with the new key
 
 - Create a presentation configuration using the admin. Example:
 
