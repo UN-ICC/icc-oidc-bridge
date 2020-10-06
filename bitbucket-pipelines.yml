@@ -28,3 +28,6 @@ pipelines:
     master:
       - <<: *stepInstallDependenciesStep
       - <<: *stepRunSonarScanner
+    dev:
+      - <<: *stepInstallDependenciesStep
+      - <<: *stepRunSonarScanner
