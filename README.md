@@ -35,10 +35,11 @@ You should run the demo in a workstation with direct access from Internet, using
  - Set superadmin password to be able to configure the bridge
 
 ```
- docker exec -it un-digital-id-oidc-bridge_oidc-django_1
+ docker exec -it oidc-bridge_oidc-django_1 bash
  
  code$ python manage.py createsuperuser
 ```
+ - Connect to the admin console: http://loccalhost:5000/admin
 
  - Add the following key in the model RSAKey so it matches the variable JWT_KEY_KID in oidc_controller/settings/local.py
 
