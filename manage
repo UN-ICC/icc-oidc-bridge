@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Docker
+export COMPOSE_PROJECT_NAME="oidc-bridge"
+
 # database
 export POSTGRESQL_DATABASE="OIDC"
 export POSTGRESQL_USER="DB_USER"
@@ -36,11 +39,11 @@ fi
 
 start() {
     docker-compose build
-    docker-compose up -d
+    docker-compose -p ${COMPOSE_PROJECT_NAME} up -d
     docker-compose logs -f
 }
 stop() {
-    docker-compose stop 
+    docker-compose -p ${COMPOSE_PROJECT_NAME} stop
 }
 
 usage() {

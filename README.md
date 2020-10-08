@@ -39,8 +39,9 @@ You should run the demo in a workstation with direct access from Internet, using
  
  code$ python manage.py createsuperuser
 ```
+ - Connect to the admin console: http://loccalhost:5000/admin
 
- - Add the following key in the model RSAKey so it matches the variable JWT_KEY_KID in local.py
+ - Add the following key in the model RSAKey so it matches the variable JWT_KEY_KID in oidc_controller/settings/local.py
 
 ```
  -----BEGIN RSA PRIVATE KEY-----
@@ -78,8 +79,10 @@ t6UBCB+s1tVpoooQ1VCeSrLsB5GMS5uT6WsEfkAf3DQUhLxhDNH2
  RSA key successfully created with kid: 3fd0079d2f87421708864ee9c84c8d4d
  ```
  And update the local.py with the new key
+ 
+- Head to http://localhost:5000/admin/ and login with the superuser you just created
 
-- Create a presentation configuration using the admin. Example:
+- Create a presentation configuration using the admin interface. Example:
 
     id: `verified-email`
     
@@ -90,13 +93,24 @@ t6UBCB+s1tVpoooQ1VCeSrLsB5GMS5uT6WsEfkAf3DQUhLxhDNH2
     {"name": "Basic Proof", "version": "1.0", "requested_attributes": [{"name": "email", "restrictions": []}], "requested_predicates": []}
     ```
 
-- Create a client with the admin: check [Add Client](https://django-oidc-provider.readthedocs.io/en/latest/sections/relyingparties.html). When creating the client ensure that the client has the following parameters:
-    Client Type: Public
-    Response types: code(Authorization Code Flow)
-    Redirect Uris: http://localhost:5000/oidc/auth/cb/ (This URL should match what it comes from the RP in the demo)
- - After creating the client, get the client ID and update the [manage](https://github.com/bcgov/vc-authn-oidc/blob/master/demo/docker/manage) and modify the variable OIDC_RP_CLIENT_ID
-   
- - If you prefer, you can run q quicker demo by not starting the vc-authn part and just invoke the following URL replacing the IP address, the redirect URI and the client_id
-```
- htttp://localhost:5000/vc/connect/authorize?pres_req_conf_id=verified-email&scope=openid+profile+vc_authn&response_type=code&client_id=310090&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Foidc%2Fauth%2Fcb%2F&state=O8ALJmGFm5ByvYMyWhT7vkzdc3dc5Yds&nonce=
-``` 
+- Create a client with the admin: check [Add Client](https://django-oidc-provider.readthedocs.io/en/latest/sections/relyingparties.html#using-the-admin). When creating the client ensure that the client has the following parameters:
+    - Name: Testing
+    - Client Type: Public
+    - Response types: code(Authorization Code Flow)
+    - Redirect Uris: http://localhost:5000/oidc/auth/cb/ (This URL should match what it comes from the RP in the demo)
+
+- Note the client ID which was generated
+
+- Generate the QR Code
+	- Alternative A: run the vc-authn-oidc demo with instructions from the following repository
+	   ```
+	   git clone https://github.com/bcgov/vc-authn-oidc.git
+	   ```
+	   - After creating the client in the step above, get the client ID and update the [manage](https://github.com/bcgov/vc-authn-oidc/blob/master/demo/docker/manage) and modify the variable OIDC_RP_CLIENT_ID
+	 
+	- Alternative B: open link in browser
+	  - invoke the following URL, replacing the IP address, the redirect URI and the client_id
+		```
+		 http://localhost:5000/vc/connect/authorize?pres_req_conf_id=verified-email&scope=openid+profile+vc_authn&response_type=code&client_id=310090&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Foidc%2Fauth%2Fcb%2F&state=O8ALJmGFm5ByvYMyWhT7vkzdc3dc5Yds&nonce=
+		``` 
+		
