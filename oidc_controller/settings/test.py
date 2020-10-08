@@ -1,5 +1,7 @@
 from .base import *
 
+SECRET_KEY = "dgs7943jf.bdgm843hjhjHHJDgsgdsjgzqos845ksdk.//fds"
+
 DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": ":memory:"}}
 
 JWT_TOKEN_VALIDITY = 1
