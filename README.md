@@ -1,4 +1,4 @@
-# ICC OIDC Bridge
+# Yoma OIDC Bridge
 
 This repository contains Python/Django code for an implementation of Indy verifiable credential-based authentication using OpenID Connect
 
@@ -39,7 +39,7 @@ You should run the demo in a workstation with direct access from Internet, using
  
  code$ python manage.py createsuperuser
 ```
- - Connect to the admin console: http://loccalhost:5000/admin
+ - Connect to the admin console: http://localhost:5000/admin
 
  - Add the following key in the model RSAKey so it matches the variable JWT_KEY_KID in oidc_controller/settings/local.py
 
