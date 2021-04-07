@@ -1,4 +1,4 @@
-# ICC OIDC Bridge
+# Yoma OIDC Bridge
 
 This repository contains Python/Django code for an implementation of Indy verifiable credential-based authentication using OpenID Connect
 
@@ -25,6 +25,23 @@ To be able to use this project in the vc-authn-demo [Demo](https://github.com/bc
 **Important**
 You should run the demo in a workstation with direct access from Internet, using a cloud provider or ngrok
 
+#TODO - Add ngrok todo and docker support with env vars to replace endpoints with ngrok
+
+ - Start ngrok
+
+In one terminal
+``
+ ngrok http 5679
+``
+Copy the HTTP endpoint URL and update the ACA_PY_TRANSPORT_URL variable in oidc_controller/settings/local.py
+
+
+In a second terminal
+``
+ ngrok http 5000
+``
+Copy the HTTP endpoint URLs and update the IDENTITY_SERVER_URL and SITE_URL variable in ./manage script
+
  - Start the agent
 
 ```
@@ -39,7 +56,7 @@ You should run the demo in a workstation with direct access from Internet, using
  
  code$ python manage.py createsuperuser
 ```
- - Connect to the admin console: http://loccalhost:5000/admin
+ - Connect to the admin console: http://localhost:5000/admin
 
  - Add the following key in the model RSAKey so it matches the variable JWT_KEY_KID in oidc_controller/settings/local.py
 

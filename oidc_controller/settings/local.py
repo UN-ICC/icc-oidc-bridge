@@ -34,15 +34,11 @@ SITE_URL = os.environ["SITE_URL"]
 
 JWT_TOKEN_VALIDITY = 720
 JWT_TOKEN_ISSUER = SITE_URL
-JWT_KEY_KID = "3fd0079d2f87421708864ee9c84c8d4d"
+JWT_KEY_KID = "525786059b724b15b2d23033664342ff" # Make sure this is the kid that matches the RSA keypair generated in the OIDC admin interface
 
-#TODO extract API key and Webhooks to dockerfile
-ACA_PY_WEBHOOK_HOST = "0.0.0.0"
-ACA_PY_WEBHOOK_PORT = 8022
-ACA_PY_WEBHOOK_BASE = ""
-API_KEY = "alice_api_123456789"
 
-ACA_PY_URL = f"http://aca-py:{ACA_PY_ADMIN_PORT}"
-ACA_PY_TRANSPORT_URL = f"http://aca-py:{ACA_PY_TRANSPORT_PORT}"
+ACA_PY_URL = f"http://aca-py:{ACAPY_ADMIN_PORT}"
+# Make sure this is an ngrok endpoint i.e. ngrok http http://localhost:5679
+ACA_PY_TRANSPORT_URL = f"https://5e2594552eaf.ngrok.io"
 POLL_INTERVAL = 5000
 POLL_MAX_TRIES = 12
