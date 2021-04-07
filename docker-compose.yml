@@ -59,7 +59,7 @@ services:
         --${ACAPY_ADMIN_MODE} \
         --label ${AGENT_NAME} \
         --webhook-url ${IDENTITY_SERVER_WEB_HOOK_URL} \
-        --ACAPY_AUTO_PROVISION true",
+        --auto-provision",
         ]
     depends_on:
       - oidc-django
