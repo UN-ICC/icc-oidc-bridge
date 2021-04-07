@@ -60,6 +60,8 @@ services:
         --label ${AGENT_NAME} \
         --webhook-url ${IDENTITY_SERVER_WEB_HOOK_URL}",
         ]
+    depends_on:
+      - oidc-django
 volumes:
   db-volume:
 
