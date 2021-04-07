@@ -1,4 +1,5 @@
-from aca.client import ACAClient
+# from aca.client import ACAClient
+from aries_cloudcontroller.aries_controller import AriesAgentController
 from django.utils import timezone
 from datetime import timedelta
 
@@ -9,14 +10,19 @@ from django.conf import settings
 
 
 def authorization(pres_req_conf_id: str, request_parameters: dict):
-    aca_client = ACAClient(settings.ACA_PY_URL, settings.ACA_PY_TRANSPORT_URL)
+    #aca_client = ACAClient(settings.ACA_PY_URL, settings.ACA_PY_TRANSPORT_URL)
+    # Based on the aca-py agent you wish to control
+    agent_controller = AriesAgentController(admin_url=settings.ACA_PY_URL, api_key=API_KEY)
     presentation_configuration = PresentationConfigurations.objects.get(
         id=pres_req_conf_id
     )
 
-    response = aca_client.create_proof_request(presentation_configuration.to_json())
-    public_did = aca_client.get_public_did()
-    endpoint = aca_client.get_endpoint_url()
+    #response = aca_client.create_proof_request(presentation_configuration.to_json())
+    response = agent_controller.proofs.create_request(presentation_configuration.to_json())
+    # public_did = aca_client.get_public_did()
+    public_did =  agent_controller.wallet.get_public_did()
+    # endpoint = aca_client.get_endpoint_url()
+    endpoint = agent_controller.ledger.get_did_endpoint()
 
     presentation_request = PresentationFactory.from_params(
         presentation_request=response.get("presentation_request"),
