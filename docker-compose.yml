@@ -52,13 +52,14 @@ services:
         --genesis-url '${GENESIS_URL}' \
         --auto-verify-presentation \
         --wallet-type 'indy' \
-        --wallet-name 'oidc_agent_wallet' \
+        --wallet-name 'oidc_agent_wallet1' \
         --wallet-key '${WALLET_ENCRYPTION_KEY}' \
         --seed '${AGENT_SEED}' \
         --admin '0.0.0.0' ${AGENT_ADMIN_PORT} \
         --${ACAPY_ADMIN_MODE} \
         --label ${AGENT_NAME} \
-        --webhook-url ${IDENTITY_SERVER_WEB_HOOK_URL}",
+        --webhook-url ${IDENTITY_SERVER_WEB_HOOK_URL} \
+        --ACAPY_AUTO_PROVISION true",
         ]
     depends_on:
       - oidc-django
