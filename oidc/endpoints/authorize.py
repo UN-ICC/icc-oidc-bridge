@@ -1,5 +1,6 @@
 # from aca.client import ACAClient
 from aries_cloudcontroller.aries_controller import AriesAgentController
+from asgiref.sync import sync_to_async
 from django.utils import timezone
 from datetime import timedelta
 
@@ -8,21 +9,29 @@ from oidc.utils.shortener import create_short_url
 from oidc.models import AuthSession, PresentationConfigurations, MappedUrl
 from django.conf import settings
 
+WEBHOOK_HOST = " https://6f0420f94071.ngrok.io"
+WEBHOOK_PORT = 443
+WEBHOOK_BASE = " https://6f0420f94071.ngrok.io/webhooks/"
 
-def authorization(pres_req_conf_id: str, request_parameters: dict):
-    #aca_client = ACAClient(settings.ACA_PY_URL, settings.ACA_PY_TRANSPORT_URL)
+async def authorization(pres_req_conf_id: str, request_parameters: dict):
     # Based on the aca-py agent you wish to control
-    agent_controller = AriesAgentController(admin_url=settings.ACA_PY_URL, api_key=API_KEY)
+    print('BEFORE WEBHOOK START')
+    agent_controller = AriesAgentController(admin_url=settings.ACA_PY_URL)
+    print('ACAPY controller started')
+    agent_controller.init_webhook_server(webhook_host=WEBHOOK_HOST, webhook_port=WEBHOOK_PORT, webhook_base=WEBHOOK_BASE)
+    print('WEBHOOOKS STARTED')
     presentation_configuration = PresentationConfigurations.objects.get(
         id=pres_req_conf_id
     )
 
-    #response = aca_client.create_proof_request(presentation_configuration.to_json())
     response = agent_controller.proofs.create_request(presentation_configuration.to_json())
-    # public_did = aca_client.get_public_did()
+    print('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
+    print(response)
     public_did =  agent_controller.wallet.get_public_did()
-    # endpoint = aca_client.get_endpoint_url()
+    print(public_did)
     endpoint = agent_controller.ledger.get_did_endpoint()
+    print(endpoint)
+    print('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n\n\n\n\n\n\n\n')
 
     presentation_request = PresentationFactory.from_params(
         presentation_request=response.get("presentation_request"),
