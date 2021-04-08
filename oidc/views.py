@@ -20,10 +20,12 @@ from oidc.serializers import PresentationConfigurationSerializer
 from rest_framework import permissions
 from django.shortcuts import get_object_or_404
 from oidc.endpoints.token import create_id_token
-from oidc.endpoints.authorize import authorization
+from oidc.endpoints.authorize import authorization, authorization_async
 
 from oidc_provider.lib.endpoints.authorize import AuthorizeEndpoint
 from django.conf import settings
+
+import asyncio
 
 LOGGER = logging.getLogger(__name__)
 
@@ -156,7 +158,7 @@ def token_endpoint(request):
         return JsonResponse(data)
 
 
-def authorize(request):
+async def authorize(request):
     template_name = "qr_display.html"
 
     if request.method == "GET":
@@ -168,20 +170,21 @@ def authorize(request):
         if not scopes or "vc_authn" not in scopes.split(" "):
             return HttpResponseBadRequest("Scope vc_authn not found")
 
-        aut = AuthorizeEndpoint(request)
-        try:
-            aut.validate_params()
-        except Exception as e:
-            # return HttpResponseBadRequest(
-            #     f"Error validating parameters: [{e.error}: {e.description}]"
-            # )
-            return HttpResponseBadRequest(
-                f"Error validating parameters: [{e!r}: {e!r}]"
-            )
+        # TODO Fix code commented below
+        # aut = AuthorizeEndpoint(request)
+        # try:
+        #     await sync_to_async(aut.validate_params())
+        # except Exception as e:
+        #     # return HttpResponseBadRequest(
+        #     #     f"Error validating parameters: [{e.error}: {e.description}]"
+        #     # )
+        #     return HttpResponseBadRequest(
+        #         f"Error validating parameters: [{e!r}: {e!r}]"
+        #     )
 
-        short_url, session_id, pres_req, b64_presentation = authorization(
+        short_url, session_id, pres_req, b64_presentation = await asyncio.gather(authorization_async(
             pres_req_conf_id, request.GET
-        )
+        ))
 
         request.session["sessionid"] = session_id
 
