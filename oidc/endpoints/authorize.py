@@ -1,6 +1,6 @@
 # from aca.client import ACAClient
 from aries_cloudcontroller.aries_controller import AriesAgentController
-from asgiref.sync import sync_to_async
+from asgiref.sync import sync_to_async, async_to_sync
 from django.utils import timezone
 from datetime import timedelta
 
@@ -13,23 +13,25 @@ WEBHOOK_HOST = " https://6f0420f94071.ngrok.io"
 WEBHOOK_PORT = 443
 WEBHOOK_BASE = " https://6f0420f94071.ngrok.io/webhooks/"
 
+
+@async_to_sync
 async def authorization(pres_req_conf_id: str, request_parameters: dict):
     # Based on the aca-py agent you wish to control
     print('BEFORE WEBHOOK START')
     agent_controller = AriesAgentController(admin_url=settings.ACA_PY_URL)
     print('ACAPY controller started')
-    agent_controller.init_webhook_server(webhook_host=WEBHOOK_HOST, webhook_port=WEBHOOK_PORT, webhook_base=WEBHOOK_BASE)
+    await agent_controller.init_webhook_server(webhook_host=WEBHOOK_HOST, webhook_port=WEBHOOK_PORT, webhook_base=WEBHOOK_BASE)
     print('WEBHOOOKS STARTED')
     presentation_configuration = PresentationConfigurations.objects.get(
         id=pres_req_conf_id
     )
 
-    response = agent_controller.proofs.create_request(presentation_configuration.to_json())
+    response = await agent_controller.proofs.create_request(presentation_configuration.to_json())
     print('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
     print(response)
-    public_did =  agent_controller.wallet.get_public_did()
+    public_did = await agent_controller.wallet.get_public_did()
     print(public_did)
-    endpoint = agent_controller.ledger.get_did_endpoint()
+    endpoint = await agent_controller.ledger.get_did_endpoint()
     print(endpoint)
     print('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n\n\n\n\n\n\n\n')
 

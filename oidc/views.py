@@ -155,8 +155,8 @@ def token_endpoint(request):
         data = {"access_token": "invalid", "id_token": token, "token_type": "Bearer"}
         return JsonResponse(data)
 
-@sync_to_async
-async def authorize(request):
+
+def authorize(request):
     template_name = "qr_display.html"
 
     if request.method == "GET":
@@ -176,12 +176,13 @@ async def authorize(request):
             #     f"Error validating parameters: [{e.error}: {e.description}]"
             # )
             return HttpResponseBadRequest(
-                f"Error validating parameters: [{e}: {e}]"
+                f"Error validating parameters: [{e!r}: {e!r}]"
             )
 
-        short_url, session_id, pres_req, b64_presentation = await sync_to_async(authorization(
+        short_url, session_id, pres_req, b64_presentation = authorization(
             pres_req_conf_id, request.GET
-        ))
+        )
+
         request.session["sessionid"] = session_id
 
         return TemplateResponse(
