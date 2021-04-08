@@ -1,4 +1,4 @@
-FROM python:3.6
+FROM python:3.7
 
 ARG APP_USER=app
 RUN groupadd -r ${APP_USER} && useradd -m -g ${APP_USER} ${APP_USER} 
