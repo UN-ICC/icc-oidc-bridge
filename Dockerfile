@@ -20,8 +20,8 @@ USER app
 ENV PATH="/home/app/.local/bin:${PATH}"
 
 COPY requirements.txt /code/requirements.txt
-RUN pip install -r requirements.txt
-RUN pip install mod_wsgi
+RUN pip3 install -r requirements.txt
+RUN pip3 install mod_wsgi
 
 COPY . /code
 
