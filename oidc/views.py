@@ -161,6 +161,10 @@ def token_endpoint(request):
         data = {"access_token": "invalid", "id_token": token, "token_type": "Bearer"}
         return JsonResponse(data)
 
+@sync_to_async
+def setSession(request, session_id):
+    request.session["sessionid"] = session_id
+    return request
 
 async def authorize(request):
     template_name = "qr_display.html"
@@ -196,7 +200,8 @@ async def authorize(request):
         print('TEST:', test[0])
         short_url, session_id, pres_req, b64_presentation = test[0]
 
-        request.session["sessionid"] = session_id
+        await setSession(request, session_id)
+        # request.session["sessionid"] = session_id
 
         return TemplateResponse(
             request,
