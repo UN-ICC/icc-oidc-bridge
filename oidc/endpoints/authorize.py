@@ -109,9 +109,11 @@ async def authorization_async(pres_req_conf_id: str, request_parameters: dict):
     session, mapped_url, short_url = await createSession(pres_req_conf_id, presentation_request_id, presentation_request, request_parameters, url)
 
     print('session: ', session)
-    print('sessionpk: ', session.pk)
+    print('sessionpk: ', str(session.pk))
     print('mapped_url: ', mapped_url)
     print('short_url: ', short_url)
+    print('presx_id: ', presentation_request_id)
+    print('b64 presx: ', b64_presentation)
     # session = AuthSession.objects.create(
     #     presentation_record_id=pres_req_conf_id,
     #     presentation_request_id=presentation_request_id,

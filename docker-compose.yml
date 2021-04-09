@@ -20,6 +20,7 @@ services:
       - 5000:8080
     depends_on:
       - oidc-db
+      - aca-py
       
   oidc-db:
     image: registry.access.redhat.com/rhscl/postgresql-10-rhel7:latest
@@ -61,8 +62,7 @@ services:
         --webhook-url ${IDENTITY_SERVER_WEB_HOOK_URL} \
         --auto-provision",
         ]
-    depends_on:
-      - oidc-django
+
 volumes:
   db-volume:
 

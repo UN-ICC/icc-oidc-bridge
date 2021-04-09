@@ -27,6 +27,10 @@ from django.conf import settings
 
 import asyncio
 
+# TODO - remove the two lines below
+from django.contrib.sessions.models import Session
+Session.objects.all().delete()
+
 LOGGER = logging.getLogger(__name__)
 
 
@@ -182,9 +186,15 @@ async def authorize(request):
         #         f"Error validating parameters: [{e!r}: {e!r}]"
         #     )
 
-        short_url, session_id, pres_req, b64_presentation = await asyncio.gather(authorization_async(
-            pres_req_conf_id, request.GET
-        ))
+        # print('Values from async call: ', type(await asyncio.gather(authorization_async(pres_req_conf_id, request.GET))))
+        # print('Values from async call: ',await asyncio.gather(authorization_async(pres_req_conf_id, request.GET)))
+        #
+        # short_url, session_id, pres_req, b64_presentation = await asyncio.gather(authorization_async(pres_req_conf_id, request.GET))
+        test = await asyncio.gather(
+            authorization_async(pres_req_conf_id, request.GET))
+
+        print('TEST:', test[0])
+        short_url, session_id, pres_req, b64_presentation = test[0]
 
         request.session["sessionid"] = session_id
 
