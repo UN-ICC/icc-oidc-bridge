@@ -40,6 +40,6 @@ JWT_KEY_KID = "525786059b724b15b2d23033664342ff"
 
 ACA_PY_URL = f"http://aca-py:{ACA_PY_ADMIN_PORT}"
 # Make sure this is an ngrok endpoint i.e. ngrok http http://localhost:5679
-ACA_PY_TRANSPORT_URL = f"https://e4859b0f910a.ngrok.io"
+ACA_PY_TRANSPORT_URL = f"https://2797508e08b6.ngrok.io"
 POLL_INTERVAL = 5000
 POLL_MAX_TRIES = 12
