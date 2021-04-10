@@ -166,6 +166,21 @@ def setSession(request, session_id):
     request.session["sessionid"] = session_id
     return request
 
+@sync_to_async
+def validatePresentation(request):
+    # TODO Fix code commented below
+    aut = AuthorizeEndpoint(request)
+    try:
+        aut.validate_params()
+    except Exception as e:
+        # return HttpResponseBadRequest(
+        #     f"Error validating parameters: [{e.error}: {e.description}]"
+        # )
+        return HttpResponseBadRequest(
+            f"Error validating parameters: [{e!r}: {e!r}]"
+        )
+
+
 async def authorize(request):
     template_name = "qr_display.html"
 
@@ -178,29 +193,15 @@ async def authorize(request):
         if not scopes or "vc_authn" not in scopes.split(" "):
             return HttpResponseBadRequest("Scope vc_authn not found")
 
-        # TODO Fix code commented below
-        # aut = AuthorizeEndpoint(request)
-        # try:
-        #     await sync_to_async(aut.validate_params())
-        # except Exception as e:
-        #     # return HttpResponseBadRequest(
-        #     #     f"Error validating parameters: [{e.error}: {e.description}]"
-        #     # )
-        #     return HttpResponseBadRequest(
-        #         f"Error validating parameters: [{e!r}: {e!r}]"
-        #     )
+        await validatePresentation(request)
 
-        # print('Values from async call: ', type(await asyncio.gather(authorization_async(pres_req_conf_id, request.GET))))
-        # print('Values from async call: ',await asyncio.gather(authorization_async(pres_req_conf_id, request.GET)))
-        #
         # short_url, session_id, pres_req, b64_presentation = await asyncio.gather(authorization_async(pres_req_conf_id, request.GET))
-        test = await asyncio.gather(
-            authorization_async(pres_req_conf_id, request.GET))
+        test = await asyncio.gather(authorization_async(pres_req_conf_id, request.GET))
 
         print('TEST:', test[0])
         short_url, session_id, pres_req, b64_presentation = test[0]
 
-        await setSession(request, session_id)
+        request = await setSession(request, session_id)
         # request.session["sessionid"] = session_id
 
         return TemplateResponse(
@@ -213,5 +214,6 @@ async def authorize(request):
                 "poll_max_tries": settings.POLL_MAX_TRIES,
                 "poll_url": f"{settings.SITE_URL}/vc/connect/poll?pid={pres_req}",
                 "resolution_url": f"{settings.SITE_URL}/vc/connect/callback?pid={pres_req}",
+                "pres_req": pres_req,
             },
         )
