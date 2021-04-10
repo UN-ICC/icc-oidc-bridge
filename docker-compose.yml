@@ -21,6 +21,8 @@ services:
     depends_on:
       - oidc-db
       - aca-py
+    volumes:
+      - ./:/code
       
   oidc-db:
     image: registry.access.redhat.com/rhscl/postgresql-10-rhel7:latest
@@ -53,7 +55,7 @@ services:
         --genesis-url '${GENESIS_URL}' \
         --auto-verify-presentation \
         --wallet-type 'indy' \
-        --wallet-name 'oidc_agent_wallet1' \
+        --wallet-name 'oidc_agent_wallet' \
         --wallet-key '${WALLET_ENCRYPTION_KEY}' \
         --seed '${AGENT_SEED}' \
         --admin '0.0.0.0' ${AGENT_ADMIN_PORT} \
