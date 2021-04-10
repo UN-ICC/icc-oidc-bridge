@@ -12,9 +12,9 @@ from datetime import datetime, timedelta
 
 import asyncio
 
-WEBHOOK_HOST = " https://6f0420f94071.ngrok.io"
+WEBHOOK_HOST = "https://8b1dec9d51dd.ngrok.io"
 WEBHOOK_PORT = 443
-WEBHOOK_BASE = " https://6f0420f94071.ngrok.io/webhooks/"
+WEBHOOK_BASE = "https://8b1dec9d51dd.ngrok.io/webhooks/"
 
 def authorization(pres_req_conf_id: str, request_parameters: dict):
     aca_client = ACAClient(settings.ACA_PY_URL, settings.ACA_PY_TRANSPORT_URL)
@@ -76,9 +76,9 @@ async def authorization_async(pres_req_conf_id: str, request_parameters: dict):
     print('AGENT CONNECT')
     agent_controller = AriesAgentController(admin_url=settings.ACA_PY_URL)
     print('ACAPY AGENT CONNECTED')
-    print('WEBHOOOKS STARTING')
-    # await agent_controller.init_webhook_server(webhook_host=WEBHOOK_HOST, webhook_port=WEBHOOK_PORT, webhook_base=WEBHOOK_BASE)
-    print('WEBHOOOKS STARTED')
+    # print('WEBHOOOKS STARTING')
+    # await asyncio.gather(agent_controller.init_webhook_server(webhook_host=WEBHOOK_HOST, webhook_port=WEBHOOK_PORT, webhook_base=WEBHOOK_BASE))
+    # print('WEBHOOOKS STARTED')
     # task1 = asyncio.ensure_future(await getPresentationConfig(pres_req_conf_id))
     # presentation_configuration = asyncio.wait(task1)
     presentation_configuration = await getPresentationConfig(pres_req_conf_id)
@@ -87,19 +87,38 @@ async def authorization_async(pres_req_conf_id: str, request_parameters: dict):
     # response = await agent_controller.proofs.create_request(presentation_configuration.to_json())
     response = await asyncio.gather(agent_controller.proofs.create_request(presentation_configuration.to_json()))
     print('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
-    print(response)
+    print('PRESENTATION REQUEST: ', response[0])
+    # TODO - the current DID of the Agent is already ledgered on Stagingnet
+    # This creates a scenario where the endpoint being fetched is wrong
+    # Need to update the code so that new DIDs can be ledgered to stagingnet together with endpoints
     public_did = await asyncio.gather(agent_controller.wallet.get_public_did())
-    print(public_did)
+    print('PUBLIC DID: ', public_did)
     endpoint = await asyncio.gather(agent_controller.ledger.get_did_endpoint(public_did[0]['result']['did']))
-    print(endpoint)
+    print('ENDPOINT: ', endpoint)
+    # TODO - this will wail due to no TAA accepted on ledger
+    TAA_response = await agent_controller.ledger.get_taa()
+    TAA = TAA_response['result']['taa_record']
+    TAA['mechanism'] = "service_agreement"
+    # print(TAA)
+
+    TAA_accept = await agent_controller.ledger.accept_taa(TAA)
+    ## Will return {} if successful
+    print(TAA_accept)
+    await asyncio.gather(agent_controller.wallet.set_did_endpoint(public_did[0]['result']['did'], settings.ACA_PY_TRANSPORT_URL, 'Endpoint'))
+    endpoint = await asyncio.gather(agent_controller.ledger.get_did_endpoint(public_did[0]['result']['did']))
+    print('ENDPOINT: ', endpoint)
+    print(response[0].get("presentation_request"))
+    print('ACAPY TRANSPORT URL:', settings.ACA_PY_TRANSPORT_URL)
     print('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n\n\n\n\n\n\n\n')
 
     presentation_request = PresentationFactory.from_params(
         presentation_request=response[0].get("presentation_request"),
         p_id=response[0].get("thread_id"),
         verkey=[public_did[0].get("verkey")],
-        endpoint=endpoint,
+        endpoint=endpoint[0],
     ).to_json()
+
+    print('PRESENTATION REQUEST: ', presentation_request)
 
     presentation_request_id = response[0]["presentation_exchange_id"]
 
@@ -128,5 +147,7 @@ async def authorization_async(pres_req_conf_id: str, request_parameters: dict):
     # short_url = mapped_url.get_short_url()
     # print(short_url)
 
+    print('test')
+    await agent_controller.terminate()
     return short_url, str(session.pk), presentation_request_id, b64_presentation
 
