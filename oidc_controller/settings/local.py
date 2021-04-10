@@ -34,11 +34,12 @@ SITE_URL = os.environ["SITE_URL"]
 
 JWT_TOKEN_VALIDITY = 720
 JWT_TOKEN_ISSUER = SITE_URL
-JWT_KEY_KID = "525786059b724b15b2d23033664342ff" # Make sure this is the kid that matches the RSA keypair generated in the OIDC admin interface
+# Make sure this is the kid that matches the RSA keypair generated in the OIDC admin interface
+JWT_KEY_KID = "525786059b724b15b2d23033664342ff"
 
 
 ACA_PY_URL = f"http://aca-py:{ACA_PY_ADMIN_PORT}"
 # Make sure this is an ngrok endpoint i.e. ngrok http http://localhost:5679
-ACA_PY_TRANSPORT_URL = f"https://bfeccbafc9b1.ngrok.io"
+ACA_PY_TRANSPORT_URL = f"https://e4859b0f910a.ngrok.io"
 POLL_INTERVAL = 5000
 POLL_MAX_TRIES = 12
