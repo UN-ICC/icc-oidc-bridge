@@ -42,6 +42,21 @@
             <h2><a href="didcomm://launch?d_m={{ b64_presentation }}">Open in a Trusted Digital Wallet</a></h2>
         </div>
       </div>
+      <div>
+          <p>URL: {{ url }}</p>
+      </div>
+{#      <div>#}
+{#          <p>{{ b64_presentation }}</p>#}
+{#      </div>#}
+      <div>
+          <p>Short URL: {{  short_url }}</p>
+      </div>
+      <div>
+          <p>Resolution URL: {{  resolution_url }}</p>
+      </div>
+      <div>
+          <p>Presentation Request: {{  pres_req }}</p>
+      </div>
   </div>
 </span>
 {% endblock %}
