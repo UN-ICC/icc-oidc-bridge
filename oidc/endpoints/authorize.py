@@ -23,7 +23,7 @@ def authorization(pres_req_conf_id: str, request_parameters: dict):
     )
 
     response = aca_client.create_proof_request(presentation_configuration.to_json())
-    print('PROOF RESPONSE', response)
+    print('PROOF CREATE', response)
     public_did = aca_client.get_public_did()
     print('DID', public_did)
     endpoint = aca_client.get_endpoint_url()
@@ -35,6 +35,8 @@ def authorization(pres_req_conf_id: str, request_parameters: dict):
         verkey=[public_did.get("verkey")],
         endpoint=endpoint,
     ).to_json()
+
+    print('PROOF REQUEST ', presentation_request)
 
     presentation_request_id = response["presentation_exchange_id"]
     session = AuthSession.objects.create(
@@ -73,27 +75,28 @@ def createSession(pres_req_conf_id, presentation_request_id, presentation_reques
 
 async def authorization_async(pres_req_conf_id: str, request_parameters: dict):
     # Based on the aca-py agent you wish to control
-    print('AGENT CONNECT')
+    # print('AGENT CONNECT')
     agent_controller = AriesAgentController(admin_url=settings.ACA_PY_URL)
-    print('ACAPY AGENT CONNECTED')
+    # print('ACAPY AGENT CONNECTED')
     # print('WEBHOOOKS STARTING')
     # await asyncio.gather(agent_controller.init_webhook_server(webhook_host=WEBHOOK_HOST, webhook_port=WEBHOOK_PORT, webhook_base=WEBHOOK_BASE))
     # print('WEBHOOOKS STARTED')
-    # task1 = asyncio.ensure_future(await getPresentationConfig(pres_req_conf_id))
-    # presentation_configuration = asyncio.wait(task1)
     presentation_configuration = await getPresentationConfig(pres_req_conf_id)
     print('PRESENTATION CONFIG: ', presentation_configuration)
 
     # response = await agent_controller.proofs.create_request(presentation_configuration.to_json())
     response = await asyncio.gather(agent_controller.proofs.create_request(presentation_configuration.to_json()))
-    print('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
-    print('PRESENTATION REQUEST: ', response[0])
+    response = response[0]
+
+    print('PROOF CREATE: ', response)
     # TODO - the current DID of the Agent is already ledgered on Stagingnet
     # This creates a scenario where the endpoint being fetched is wrong
     # Need to update the code so that new DIDs can be ledgered to stagingnet together with endpoints
     public_did = await asyncio.gather(agent_controller.wallet.get_public_did())
+    public_did = public_did[0]['result']
     print('PUBLIC DID: ', public_did)
-    endpoint = await asyncio.gather(agent_controller.ledger.get_did_endpoint(public_did[0]['result']['did']))
+    endpoint = await asyncio.gather(agent_controller.ledger.get_did_endpoint(public_did['did']))
+    endpoint = endpoint[0]['endpoint']
     print('ENDPOINT: ', endpoint)
     # TODO - this will wail due to no TAA accepted on ledger
     TAA_response = await agent_controller.ledger.get_taa()
@@ -104,50 +107,33 @@ async def authorization_async(pres_req_conf_id: str, request_parameters: dict):
     TAA_accept = await agent_controller.ledger.accept_taa(TAA)
     ## Will return {} if successful
     print(TAA_accept)
-    await asyncio.gather(agent_controller.wallet.set_did_endpoint(public_did[0]['result']['did'], settings.ACA_PY_TRANSPORT_URL, 'Endpoint'))
-    endpoint = await asyncio.gather(agent_controller.ledger.get_did_endpoint(public_did[0]['result']['did']))
-    print('ENDPOINT: ', endpoint)
-    print(response[0].get("presentation_request"))
-    print('ACAPY TRANSPORT URL:', settings.ACA_PY_TRANSPORT_URL)
-    print('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n\n\n\n\n\n\n\n')
-
+    await asyncio.gather(agent_controller.wallet.set_did_endpoint(public_did['did'], settings.ACA_PY_TRANSPORT_URL, 'Endpoint'))
+    endpoint = await asyncio.gather(agent_controller.ledger.get_did_endpoint(public_did['did']))
+    endpoint = endpoint[0]['endpoint']
+    print('ENDPOINT ', endpoint)
     presentation_request = PresentationFactory.from_params(
-        presentation_request=response[0].get("presentation_request"),
-        p_id=response[0].get("thread_id"),
-        verkey=[public_did[0].get("verkey")],
-        endpoint=endpoint[0],
+        presentation_request=response.get("presentation_request"),
+        p_id=response.get("thread_id"),
+        verkey=[public_did.get("verkey")],
+        endpoint=endpoint,
     ).to_json()
 
-    print('PRESENTATION REQUEST: ', presentation_request)
+    print('PROOF REQUEST: ', presentation_request)
 
-    presentation_request_id = response[0]["presentation_exchange_id"]
+    presentation_request_id = response["presentation_exchange_id"]
 
     url, b64_presentation = create_short_url(presentation_request)
     print(url)
 
     session, mapped_url, short_url = await createSession(pres_req_conf_id, presentation_request_id, presentation_request, request_parameters, url)
 
-    print('session: ', session)
+    print('SESSION ', session)
     print('sessionpk: ', str(session.pk))
     print('mapped_url: ', mapped_url)
     print('short_url: ', short_url)
     print('presx_id: ', presentation_request_id)
     print('b64 presx: ', b64_presentation)
-    # session = AuthSession.objects.create(
-    #     presentation_record_id=pres_req_conf_id,
-    #     presentation_request_id=presentation_request_id,
-    #     presentation_request=presentation_request,
-    #     request_parameters=request_parameters,
-    #     #TODO fix timing
-    #     expired_timestamp= timezone.now() + timedelta(minutes=60),
-    # )
 
-    # mapped_url = MappedUrl.objects.create(url=url, session=session)
-    # print(mapped_url)
-    # short_url = mapped_url.get_short_url()
-    # print(short_url)
-
-    print('test')
     await agent_controller.terminate()
     return short_url, str(session.pk), presentation_request_id, b64_presentation
 
