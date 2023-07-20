@@ -1,0 +1,54 @@
+[tool.isort]
+profile = "black"
+line_length = 100
+skip = "migrations"
+
+[tool.black]
+line-length = 100
+exclude = "(migrations)"
+
+[tool.flake8]
+max-line-length = 100
+exclude = "unog_digital_id/settings/*,**/migrations/**,scripts/*"
+ignore = "E203,W503"
+
+[tool.mypy]
+ignore_missing_imports = true
+plugins = "mypy_django_plugin.main, mypy_drf_plugin.main"
+
+[[tool.mypy.overrides]]
+module = "*.migrations.*"
+ignore_errors = true
+
+[mypy.plugins.django-stubs]
+django_settings_module = "oidc_controller.settings.test"
+
+[tool.pytest.ini_options]
+addopts = "--nomigrations --junitxml=pytest-report.xml --ds=oidc_controller.settings.test"
+junit_family = "legacy"
+python_files = "test_*.py tests.py"
+filterwarnings = ["ignore::django.utils.deprecation.RemovedInDjango40Warning",
+                  "ignore::django.utils.deprecation.RemovedInDjango41Warning"]
+
+[tool.coverage.run]
+source = ["."]
+omit  = [
+    "manage.py",
+    "**/conftest.py",
+    "**/__init__.py",
+    "**/test_*.py",
+    "**/tests_*.py",
+    "**/tests.py",
+    "**/tests/**",
+    "**/urls.py",
+    "**/asgi.py",
+    "**/wsgi.py",
+    "**/migrations/**",
+    "**/apps.py",
+	"**/models.py",
+	"**/settings/**",
+	"**/conftest.py",
+	"**/admin.py",
+	"**/templates/**",
+    "**/management/**"
+]

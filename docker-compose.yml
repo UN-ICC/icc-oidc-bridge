@@ -1,0 +1,79 @@
+version: "3.1"
+
+services:
+  oidc-django:
+    build: .
+    environment:
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_PORT: ${DB_PORT}
+      DB_HOST: ${DB_HOST}
+      ACAPY_ADMIN_PORT: ${ACAPY_ADMIN_PORT}
+      ACAPY_TRANSPORT_PORT: ${ACAPY_TRANSPORT_PORT}
+      ACA_PY_WEBHOOKS_API_KEY: ${ACA_PY_WEBHOOKS_API_KEY}
+      ACA_PY_TRANSPORT_UR: ${ACA_PY_TRANSPORT_URL}
+      ACA_PY_URL: ${ACA_PY_URL}
+      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE}
+      SECRET_KEY: ${SECRET_KEY}
+      SITE_URL: ${SITE_URL}
+      DEBUG: ${DEBUG}
+      JWT_KEY_KID: ${JWT_KEY_KID}
+      SESSION_COOKIE_SECURE: "False"
+      CSRF_COOKIE_SECURE: "False"
+      SECURE_SSL_REDIRECT: "False"
+    networks:
+      - oidc
+    ports:
+      - 8084:8080
+    depends_on:
+      - oidc-db
+
+  oidc-db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DATABASE: ${DB_NAME}
+    ports:
+      - ${DB_PORT}:5432
+    volumes:
+      - db-volume:/var/lib/pgsql/data
+    networks:
+      - oidc
+    profiles:
+      - db
+
+  aca-py:
+    image: bcgovimages/aries-cloudagent:py36-1.16-1_0.8.1
+    ports:
+      - ${ACAPY_ADMIN_PORT}:${ACAPY_ADMIN_PORT}
+      - ${ACAPY_TRANSPORT_PORT}:${ACAPY_TRANSPORT_PORT}
+    networks:
+      - oidc
+    entrypoint: /bin/bash
+    volumes:
+      - wallet-volume:/home/indy/.indy_client/wallet
+    command: [
+      "-c",
+      "aca-py start \
+        --inbound-transport http '0.0.0.0' ${ACAPY_TRANSPORT_PORT} \
+        --outbound-transport http \
+        --endpoint http://${DOCKERHOST}:${ACAPY_TRANSPORT_PORT} \
+        --genesis-url '${GENESIS_URL}' \
+        --auto-verify-presentation \
+        --wallet-type 'askar' \
+        --wallet-name 'oidc_agent_wallet' \
+        --wallet-key '${WALLET_ENCRYPTION_KEY}' \
+        --seed '${AGENT_SEED}' \
+        --admin '0.0.0.0' ${ACAPY_ADMIN_PORT} \
+        --${ACAPY_ADMIN_MODE} \
+        --label ${AGENT_NAME} \
+        --webhook-url http://oidc-django:8080/webhooks/${ACA_PY_WEBHOOKS_API_KEY}",
+        ]
+volumes:
+  db-volume:
+  wallet-volume:
+
+networks:
+  oidc:

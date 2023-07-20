@@ -1,0 +1,8 @@
+Release to Github
+
+Co-authored-by: Javier Vela  <icc-vela@users.noreply.github.com>
+Co-authored-by: Anneli Pedersen <icc-pedersen@users.noreply.github.com>
+Co-authored-by: Sergio Serrano <icc-serranos@users.noreply.github.com>
+Co-authored-by: Álex López <icc-lopezal@users.noreply.github.com>
+Co-authored-by: Guillem Martinez <icc-martinezg@users.noreply.github.com>
+Co-authored-by: Andrea Garcia <icc-garciasi@users.noreply.github.com>

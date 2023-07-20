@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+{% load qr_code %}
+{% load static %}
+<html lang="en">
+  <head>    
+    <meta charset="UTF-8">
+    <title>OIDC Indy bridge</title>    
+    <style>
+        body {
+          font-family: Sans-Serif;
+        }
+        code.multiline {
+          display: block;
+          white-space: pre-wrap
+        }
+        td {
+          padding-left: 20px;
+          padding-right: 20px;
+        }
+        .container {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          padding-top: 12px;
+          height: 100vh;
+          width: 100vw;
+        }
+    </style>
+</head>
+<body>
+
+{% block content %}
+<span>
+  <div class="container">
+      <h1>OIDC Indy bridge</h1>
+      <div id="qr-code">
+        {% qr_from_text url size="M" image_format="svg" %}
+
+        <br>
+        <div id="btn-didcomm">
+            <h2><a href="didcomm://launch?d_m={{ b64_presentation }}">Open in a Trusted Digital Wallet</a></h2>
+        </div>
+      </div>
+  </div>
+</span>
+{% endblock %}
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<script type="text/javascript">
+    var tryNumber = 0
+    var maxTries = parseInt("{{ poll_max_tries }}")
+    $(document).ready((function poll() {
+        setTimeout(function () {
+            $.ajax({
+                type: 'GET',
+                url: "{{ poll_url }}",
+                success: function () {
+                    window.location.replace("{{ resolution_url }}");
+                },
+                error: function() {
+                    tryNumber += 1;
+                    if (tryNumber >= maxTries) {
+                        return maxTriesReached()
+                    }
+                    poll()
+                }
+            });
+        }, parseInt("{{ poll_interval }}", 10));
+    })());
+
+    function maxTriesReached() {
+        $("#qr-code")[0].innerHTML = "Timeout reached, please refresh the page to get a new QR code."
+    }
+</script>
+
+</body>
+</html>

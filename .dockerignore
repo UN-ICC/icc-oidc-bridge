@@ -1,0 +1,7 @@
+./.dockerignore
+./.git
+./.gitignore
+./Dockerfile
+./bitbucket-pipelines.yml
+./docker-compose.yml
+./README.md
